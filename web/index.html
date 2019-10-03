@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="SunkarSat">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <title>SunkarSat - Kazakhstan space images distibuting platform</title>
+  <meta name="author" content="kaharema@gmail.com">
+
+  <!--<link href="css/bootstrap.min.superhero.css" rel="stylesheet" type="text/css">-->
+  <link rel="stylesheet" href="css/bootstrap.min.cosmo.css" type="text/css">
+    <link rel="stylesheet" href="css/L.Control.MousePosition.css" type="text/css">
+  <link rel="stylesheet" href="css/ionicons.min.css" type="text/css" />
+  <!--<link rel="stylesheet" href="https://openlayers.org/en/v3.19.0/css/ol.css" type="text/css">-->
+  <!--<link href="css/style.KGS.css" rel="stylesheet" type="text/css" >-->
+  <link rel="stylesheet" href="css/style.KGS.bright.css" type="text/css" >
+  <!--<link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">-->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
+  <link rel="stylesheet" href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' type='text/css'>
+  <script src="js/leaflet.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="leaflet.css" type='text/css'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css"/>
+  <script src="js/leaflet.shpfile.js" type="text/javascript"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
+  <!--To preload-->
+  <script src="js/jquery-1.10.2.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/angular.min.js"></script>
+  <script src="js/L.Control.MousePosition.js" type="text/javascript"></script>
+  <!--Localization-->
+  <script src="js/lang.js"></script>
+  <script src="js/app-translation.js"></script>
+  <script data-require="angular-translate" data-semver="2.15.1" src="https://cdn.rawgit.com/angular-translate/bower-angular-translate/2.5.0/angular-translate.js"></script>
+</head>
+<body ng-controller="translateController">
+  
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand kgs-logo" href="#"></a>
+      </div>
+  
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          
+          <li class="nav-divider"></li>
+          <li>
+            <form class="navbar-form navbar-left" role="date-from">
+              <div id="date-from" class="form-group input-append date form_datetime" data-date-format="yyyy-mm-dd" data-link-field="dtp_input_to" data-link-format="yyyy-mm-dd">
+                <a href="#" class="btn btn-default">{{'date set'| translate}}</a>
+                <input type="text" value="" class="form-control" placeholder="date-from" readonly>
+              </div>
+            </form>
+          </li>
+          <li>
+            <form class="navbar-form navbar-left" role="date-to">
+              <div id="date-to" class="form-group input-append date form_datetime" data-date-format="yyyy-mm-dd" data-link-field="dtp_input_to" data-link-format="yyyy-mm-dd">
+                <a href="#" class="btn btn-default">{{'date to' | translate}}</a>
+                <input type="text" value="" class="form-control" placeholder="date-to" readonly>
+              </div>
+            </form>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{'select' | translate}}<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li>
+                <a id="Point" href="#" class="draw btn btn-lg"><span class="icon ion-android-pin"></span>{{'point' | translate}}</a>
+              </li>
+              <li>
+                <a id="Box" href="#" class="draw btn btn-lg"><span class="ion ion-android-checkbox-outline-blank"></span>{{'box' | translate}}</a>
+              </li>
+              <li>
+                <a id="Polygon" href="#" class="draw btn btn-lg disabled"><span class="ion ion-android-checkbox-outline-blank"></span>{{'polygon' | translate}}</a>
+              </li>
+
+            </ul>
+          </li>
+          
+          
+          <li>
+			<a href="#upload" data-toggle="modal" class="draw btn btn-primary"><span style="font-size:22px" class="icon ion-ios-cloud-upload-outline"></span> {{'upload' | translate}}</a>
+          </li>
+          <li class="nav-divider"></li>
+          
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown" ng-controller="translateController" id="lang_sel">
+            <a href="#en" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+              <img id="imgNavSel" src="" alt="..." class="img-thumbnail icon-small">
+              <span id="lanNavSel"> ENG</span> <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" role="menu">
+        	    <li>
+        	      <a id="navKaz" href="#kz" class="language" ng-click="changeLanguage('kz')">
+        	        <img id="imgNavKaz" src="" alt="..." class="img-thumbnail icon-small"/>
+        	        <span id="lanNavKaz"> Kazakh </span>
+      	        </a>
+        	    </li>
+              <li>
+                <a id="navRus" href="#ru" class="language" ng-click="changeLanguage('ru')">
+                  <img id="imgNavRus" src="" alt="..." class="img-thumbnail icon-small"/>
+                  <span id="lanNavRus">Russian</span>
+                </a>
+              </li>
+              <li>
+                <a id="navEng" href="#en" class="language" ng-click="changeLanguage('en')">
+                  <img id="imgNavEng" src="" alt="..." class="img-thumbnail icon-small"/>
+                  <span id="lanNavEng"> English</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+		  <li>
+            <a id="refresh" class="btn btn-default" role="button"><span class="icon ion-ios-refresh"></span></a>  
+          </li>
+          <li>
+            <a href="#authorization" id="author" data-toggle="modal" class="btn btn-default" role="button"><span class="icon ion-ios-person-outline"></span> {{'login' | translate}} </a>  
+          </li>
+		  <li>
+            <a href="#authenitcation" id="authent" data-toggle="modal" class="btn btn-default" role="button"><span class="icon ion-ios-person-outline"></span> {{'register' | translate}} </a>  
+          </li>
+          <li>
+            <a href="#about" data-toggle="modal" class="btn btn-default" role="button"><span class="icon ion-ios-information-outline"></span>{{'help' | translate}}</a>
+          </li>
+		  <li>
+			<a href="#exit" id="logout"  data-toggle="modal" class="btn btn-default" role="button"><span class ="ion-android-exit"></span>{{'logout' | translate }}</a>
+		  </li>
+        </ul>
+         
+      </div>
+    </div>
+  </nav>
+ 
+
+  <!-- Page Content -->
+  <div id="page-content-wrapper">
+    <div id="map-control" class="map-control"></div>
+    <div id="map-canvas" ></div>
+      
+  </div>
+  <!-- /#page-content-wrapper -->
+
+  <!-- #stripsviewer on the right -->
+  <div id="stripsView" class="well collapse">
+    <h3 class="text-primary"> <strong>{{'results'| translate}}</strong> </h3>
+    <h5 id="total-results"><strong></strong></h5>
+    <div class="divider10"></div>
+    
+    <!-- Tabs for satellites -->
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#KazEOSat-1" data-toggle="tab" aria-expanded="false" class="footprint-tabs">KazEOSat-1</a></li>
+      <li class=""><a href="#KazEOSat-2" data-toggle="tab" aria-expanded="true" class="footprint-tabs">KazEOSat-2</a></li>
+	  <li>
+			
+          </li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane fade active in" id="KazEOSat-1">
+        <!--<table id="strips-table" class="table table-hover table-condensed">-->
+        <table id="table-KazEOSat-1" class="table table-hover table-condensed table-strips">
+      		<thead>
+      			<tr>
+					<th style="width:10%"><center><a href="#kmlSave" data-toggle="modal"><i class="ion-ios-cart-outline icon-store"></i></a></center></th>
+      				<th style="width:10%">{{'product' | translate}}</th>
+      				<th style="width:50%"  role="button"><center class = "preview_all">{{'preview' | translate}}</center></th>
+      				<th style="width:10%"><center><i class="ion-ios-information-outline custom-icon"></i></center></th>
+      				<th style="width:10%"><center><i class="ion-ios-eye-outline custom-icon"></i></center></th>
+					<th style="width:10%"><center><i class="ion-android-locate custom-icon"></i></center></th>
+      			</tr>
+      		</thead>
+      		<tbody>
+      		</tbody> 
+
+      	</table>
+      </div>
+      <div class="tab-pane fade" id="KazEOSat-2">
+        <table id="table-KazEOSat-2" class="table table-hover table-condensed table-strips">
+      		<thead>
+      			<tr>
+						<!-- <a href="#upload" data-toggle="modal" class="draw btn btn-primary"><span style="font-size:22px" class="icon ion-ios-cloud-upload-outline"></span> {{'upload' | translate}}</a> -->
+					<th style="width:10%"><center><a href="#kmlSave" data-toggle="modal"><i class="ion-ios-cart-outline icon-store"></i></a></center></th>
+      				<th style="width:10%">{{'product' | translate}}</th>
+      				<th style="width:50%"  role="button"><center class = "preview_all">{{'preview' | translate}}</center></th>
+      				<th style="width:10%"><center><i class="ion-ios-information-outline custom-icon"></i></center></th>
+      				<th style="width:10%"><center><i class="ion-ios-eye-outline custom-icon"></i></center></th>
+					<th style="width:10%"><center><i class="ion-android-locate custom-icon"></i></center></th> 
+      			</tr>
+      		</thead>
+      		<tbody>
+      		</tbody>
+      	</table>
+      </div>
+    </div>
+        
+    
+  </div>
+
+  <!-------------------------------------------------------------------------------->
+  <!--Modal should be used outside any postitioning, to avoid behaivoir underneath-->
+  <!-------------------------------------------------------------------------------->
+  
+  
+  <div id="authorization" class="modal fade" role="dialog">
+    <div class="modal-dialog" id="login-dp">
+      <div class="modal-content"> 
+        <div class="modal-header"> 
+          <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+          <h4 class="modal-title text-center">{{'authorization' | translate}}</h4>
+        </div>
+        <div class="modal-body row "  >
+					<div class="col-md-12">
+						<h4 id="login_text">{{'login' | translate}}</h4>
+						<form class="form" role="form"  method="post"   accept-charset="UTF-8" id="login-nav"> 
+							
+							<div class="form-group"> 
+								 <label class="sr-only" for="InputUser">{{'email address' | translate}}</label>  
+								 <input type="text" data-toggle="popover_1"  data-content="Type the username" name="user" class="form-control" id="InputUser" placeholder="Email address" required> 
+							</div> 
+							<div class="form-group">  
+								 <label class="sr-only" for="InputPassword">{{'password' | translate}}</label> 
+								 <input type="password" data-toggle="popover_2"  data-content="Type the password" name="pass" class="form-control" id="InputPassword" placeholder="Password" required> 
+							 <div class="help-block text-right"><a href="">{{'forgot the password ?' | translate}}</a></div>
+							</div>
+							<div class="form-group">
+								 <button style="width:49%"  type="submit"  id="login"  class="btn btn-primary" >{{'sign in' | translate}}</button>
+								 <button  style="width:49%; float:right" id="demo" class="btn btn-primary ">Demo</button>
+							</div>
+							<div class="checkbox"> 
+								 <label>
+								 <input type="checkbox">{{'keep me logged-in' | translate}}
+								 </label>
+							</div>
+						</form>
+					</div>
+					<div class="bottom text-center">
+						{{'new here ?' | translate }} <a id="join"; href="#authenitcation" ><b>{{'join us' | translate}}</b></a>
+					</div>
+					<div align="center" class = "demo" ng-controller="translateController" id="lang_sel">
+						<!-- <button style="width:33.3%"> -->
+						<a id="navKaz" href="#kz" class="language" ng-click="changeLanguage('kz')">
+						<img id="imgNavKaz" src="img/lang_flags/Kazakhstan.gif" alt="..." class="img-thumbnail icon-small"/>
+						<span id="lanNavKaz">  KAZ  </span>
+						</a>
+						<!-- </button> -->
+						<!-- <button style="width:33.3%"> -->
+						<a id="navRus" href="#ru" class="language" ng-click="changeLanguage('ru')">
+						<img id="imgNavRus" src="img/lang_flags/Russia.gif" alt="..." class="img-thumbnail icon-small"/>
+						<span id="lanNavRus">  RUS  </span>
+						</a>
+						<!-- </button> -->
+						<!-- <button style="width:33.3%"> -->
+						<a id="navEng" href="#en" class="language" ng-click="changeLanguage('en')">
+						<img id="imgNavEng" src="img/lang_flags/GreatBritain.gif" alt="..." class="img-thumbnail icon-small"/>
+						<span id="lanNavEng">  ENG  </span>
+						</a>
+					<!-- 	</button> -->
+					
+					</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+    <!--registration modal -->
+  <div id ="authenitcation" class = "modal fade" role="dialog">
+	<div class="modal-dialog" id="registration-dp">
+      <div class="modal-content"> 
+        <div class="modal-header"> 
+          <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+          <h4 class="modal-title text-center">{{'register' | translate}}</h4>
+        </div>
+		<div class="modal-body row"> 
+			<h4 id="registration_text">{{'Fill out the blank' | translate}}</h4>
+			<form class="form" role="form"  method="post"   accept-charset="UTF-8" id="registration-nav"> 
+				<div class="form-group"> 
+					<label class="sr-only" for="name">{{'name' | translate}}</label>  
+					<input type="text" data-toggle="popover_4"  data-content="Type the name"  class="form-control" id="name" placeholder="Name" required>
+				</div>
+				<div class="form-group"> 
+					<label class="sr-only" for="surname">{{'surname' | translate}}</label>  
+					<input type="text" data-toggle="popover_5"  data-content="Type the surname"  class="form-control" id="surname" placeholder="Surname" required>
+				</div>
+				<div class="form-group"> 
+					<label class="sr-only" for="email">{{'email address' | translate}}</label>  
+					<input type="text" data-toggle="popover_3"  data-content="Type the email"  class="form-control" id="email" placeholder="Email address" required>
+				</div>
+				<div class="form-group"> 
+					<label class="sr-only" for="r_login">{{'login' | translate}}</label>  
+					<input type="text" data-toggle="popover_6"  data-content="Type the login"  class="form-control" id="r_login" placeholder="Login" required>
+				</div>
+				<div class="form-group"> 
+					<label class="sr-only" for="company">{{'company' | translate}}</label>  
+					<input type="text" data-toggle="popover_7"  data-content="Type the company"  class="form-control" id="company" placeholder="Company name" required>
+				</div>
+				<div class="form-group"> 
+					<h4 id="purpose_text">{{'For what purposes do you need satellite images?' | translate}}</h4>
+					<label class="sr-only" for="explaination">{{'purpose' | translate}}</label>  
+					<input type="text" data-content="explaination"  class="form-control"  id="explaination"  required>
+				</div>
+				<div class="form-group">
+					 <button style="width:49%"  type="submit"  id="register"  class="btn btn-primary" >{{'Send an application for registration' | translate}}</button>
+				</div>
+			</form>
+        </div>
+       
+        </div>
+      </div>
+  </div> 
+
+
+
+  
+  <!--Alert confirmation modal  -->
+  <div id="confirm" class="modal fade" role="dialog"> 
+    <div class = "modal-dialog">
+	  <div class="modal-content">
+	    <div class="modal-header">
+		  <button type="button" class="close" data-dismiss="modal">&times;</button>
+		  
+		</div>
+		<div class="modal-body">
+		  <h2><center><b>{{'Your application for registration was successfully sent' | translate}}!</b></center></h2> 
+		</div>
+		<div class="modal-footer">
+          <button type="button"  class="btn btn-primary btn-block" data-dismiss="modal">Close</button>
+        </div>
+      </div> 
+      
+    </div>
+  </div>
+  
+  
+  <!--Alert welcome modal  -->
+  <div id="alertModal" class="modal fade" role="dialog"> 
+    <div class = "modal-dialog">
+	  <div class="modal-content">
+	    <div class="modal-header">
+		  <button type="button" class="close" data-dismiss="modal">&times;</button>
+		  
+		</div>
+		<div class="modal-body">
+		  <h2><center><b>{{'Welcome' | translate}}!</b></center></h2> 
+		</div>
+		<div class="modal-footer">
+          <button type="button"  class="btn btn-primary btn-block" data-dismiss="modal">Close</button>
+        </div>
+      </div> 
+      
+    </div>
+  </div>
+
+  <!--Alert logout session modal  -->
+  <div id="alertModal_3" class="modal fade" role="dialog"> 
+    <div class = "modal-dialog">
+	  <div class="modal-content">
+	    <div class="modal-header">
+		  <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> --> 
+		  
+		</div>
+		<div class="modal-body">
+		  <p><center><b>{{'Session out' | translate}}!</b></center></p> 
+		</div>
+		<div class="modal-footer">
+          <button type="button" id="sessionOut"  class="btn btn-primary btn-block" data-dismiss="modal">Close</button>
+        </div>
+      </div> 
+      
+    </div>
+  </div>
+
+  <!--Alert incorrect username modal -->
+ <div id="alertModal_2" class="modal fade" role="dialog"> 
+    <div class = "modal-dialog">
+	  <div class="modal-content">
+	    <div class="modal-header">
+		  <button type="button" class="close" data-dismiss="modal">&times;</button>
+		  
+		</div>
+		<div class="modal-body">
+		  <p><center>Username or password is incorrect</center></p> 
+		</div>
+		<div class="modal-footer">
+          <button type="button"  class="btn btn-primary btn-block" data-dismiss="modal">Close</button>
+        </div>
+      </div>  
+      
+    </div>
+  </div>
+
+  <!--Logout modal form -->
+  <div id="exit" class="modal fade" role="dialog"> 
+    <div class = "modal-dialog">
+	  <div class="modal-content">
+	    <div class="modal-header">
+		  <button type="button" class="close" data-dismiss="modal">&times;</button>
+		  <h4 class="modal-title">{{'logout' | translate}}</h4>
+		</div>
+		<div class="modal-body">
+		  <p>{{'Logout modal form' | translate}}</p> 
+		</div>
+		<div class="modal-footer">
+          <button type="button" id="exitting" class="btn btn-primary btn-block" data-dismiss="modal">{{'logout' | translate}}</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+  <!--About the product and company-->
+  <div id="about" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title text-center">{{'About SunkarSat platform' | translate}}</h4>
+        </div>
+        <div class="modal-body row ">
+          <div class="jumbotron">
+            <div class="container">
+              <h1>SunkarSat</h1>
+
+              <p>
+                {{'SunkarSat is a  platform made for ERS SS of Kazakhstan satellites ' | translate }}
+              </p>
+              <p><a class="btn btn-primary btn-lg" href="http://gharysh.kz/en/projects/ks-dzz-rk/">{{'learn more' | translate}}</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- settings for searching -->
+  <div id="preferenceModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">{{'presets' | translate}}</h4>
+        </div>
+        <div class="modal-body">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">{{'search criteria' | translate}}</h3>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-md-4">
+                  <h4>{{'range' | translate}}</h4>
+                </div>
+                <div class="col-md-4">
+                  <div style="overflow:hidden;">
+                    <div class="form-group">
+                      <div class="row">
+                        <div class="col-md-8">
+                          <div id="datetimepicker1"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="col-md-4">
+                  <div style="overflow:hidden;">
+                    <div class="form-group">
+                      <div class="row">
+                        <div class="col-md-8">
+                          <div id="datetimepicker2"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              <div class="row">
+               
+                <div class="col-md-4">
+                  <h4>{{'cloud coverage' | translate}}</h4>
+                </div>
+                <div class="col-md-6">
+              		<h4>
+              		  <input type="range" min="0" max="100" value="100" class="range blue"/>
+            		  </h4>
+                </div>
+              	<div class="col-md-2">
+              		<h4>
+              		  <output id="range">0</output>
+              		</h4>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <h4>{{'incidence angle' | translate}}</h4>
+                </div>
+                <div class="col-md-6">
+              		<h4>
+              		  <input type="range" min="0" max="100" value="100" class="range blue"/>
+            		  </h4>
+                </div>
+              	<div class="col-md-2">
+              		<h4>
+              		  <output id="range">0</output>
+              		</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">{{'close' | translate}}</button>
+          <button type="button" class="btn btn-primary">{{'save changes' | translate}}</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Image details and preview -->
+  <div id="footprint-details" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">{{'preview of (id)' | translate }} <strong id="footprint-code">{{'default' | translate}}</strong></h4>
+        </div>
+        <div class="modal-body row">
+          <div class="col-md-6">
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td>{{'description' | translate}}</td>
+                  <td class="sat">{{'satelite' | translate}}</td>
+                </tr>
+                <tr>
+                  <td>{{'date' | translate}}</td>
+                  <td class="shot-date">2017-01-01</td>
+                </tr>
+
+                <tr>
+                  <td>{{'product url' | translate}}</td>
+                  <td><a id="footprint-link" data-toggle="modal" href="#preview-link" target="_blank">{{'link' | translate}}</a></td>
+                </tr>
+				
+				<tr>
+                  <td>{{'Pitch' | translate}}</td>
+                  <td class="pitch_class">0</td>
+                </tr>
+				
+				<tr>
+                  <td>{{'Roll' | translate}}</td>
+                  <td class="roll_class">0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-md-6">
+            <!-- TODO: Think about adding it on map-->
+            <img id="footprint-src" src="" width="100%" height="100%"/>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <!-- <button type="button" class="btn btn-primary" data-dismiss="modal">{{'export'| translate}}</button> -->
+          <button type="button" class="btn btn-default" data-dismiss="modal">{{'close' | translate}}</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="upload" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 id="error-type" class="modal-title">{{'import' | translate}}</h4>
+        </div>
+        <div class="modal-body">
+          <ul class="nav nav-tabs">
+            <li><a data-toggle="tab" href="#upload-kml" class="import-tabs">KML</a></li>
+            <li><a data-toggle="tab" href="#upload-shp" class="import-tabs">SHP</a></li>
+          </ul>
+          
+          <div class="tab-content" >
+            <div id="upload-kml" class="tab-pane fade in active">
+              <h3>KML</h3>
+              <div id = "file_opener">
+								<label class="btn btn-primary" for="kml-file">
+									<input id="kml-file" type="file" style="display:none;">
+									{{'upload kml' | translate}}
+								</label>
+        			</div>
+							<h5>* select all mandatory KML files, or the zipped version of files<h5>
+            </div>  
+          
+            <div id="upload-shp" class="tab-pane fade in">  
+              <h3>SHP</h3>
+							
+							<p></p>
+        			<div id = "shp_file_opener">
+								<form id="addvector_form" class="addlayer">
+									<label class="btn btn-primary" for="shp-files">
+										
+											<input id="shp-files" name="file" type="file" style="display:none;" multiple>
+											{{'upload shp' | translate}}
+										
+									</label>
+								</form>
+								<h5>* select all mandatory SHP files, or the zipped version of files<h5>
+        			</div>
+
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="show_on_map" type="button" class="btn btn-default" data-dismiss="modal">{{'upload' | translate}}</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">{{'close' | translate}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+	
+	
+	
+	<div id="kmlSave" class="modal fade" role="dialog"> 
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="ion-ios-cart-outline custom-icon"></i></button>
+          <h4 id="error-type" class="modal-title">{{'save_kml' | translate}}</h4>
+        </div>
+				<div class="modal-body row">
+					<div class="col-md-8">
+						<h5 id="qsat_1"><b>{{ 'save_text' | translate }}</b> </h5>
+						<h5 id="qsat_2"> </h5>
+						<div id="qname" ></div>
+					</div>
+				<br>
+					<div class="col-md-4" >
+						<img id="qImg"  width="100%" height="100%"/>
+					</div>
+				
+				</div>
+        <div class="modal-footer">
+         
+		<a href="#saveKML" id="saveKML"  style="color:#ffffff" class="draw btn disabled"><span style="font-size:22px; color:#ffffff" class="icon ion-ios-download-outline"></span> {{'save' | translate}}</a>
+			<button type="button" class="btn btn-default" data-dismiss="modal">{{'close' | translate}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+	
+	
+	
+	
+
+  <div id="modal-error" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 id="error-type" class="modal-title">{{'error' | translate}}</h4>
+        </div>
+        <div class="modal-body">
+          <p id="error-msg"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">{{'close' | translate}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="info">&nbsp;</div>
+  <div id="loader" class="modal loader"></div>
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0/js/bootstrap-datepicker.min.js" charset="UTF-8"></script>
+  <script src="js/Map.js" type="text/javascript"></script>
+  <script src="js/KML.js" type="text/javascript"></script>
+  <script src="js/date.js" type="text/javascript"></script>
+  <script src="js/shp.min.js" type="text/javascript"></script>
+  <script src="js/Shape.js" type="text/javascript"></script>
+  <script src="js/shapefile2geojson.js" type="text/javascript"></script>
+  <script src="js/jszip.min.js" type="text/javascript"></script>
+  <script src="js/FileSaver.js" type="text/javascript"></script>
+  <script src="js/authorization.js" type="text/javascript"></script>
+  <script src="js/Leaflet.ImageOverlay.Rotated.js" type="text/javascript"></script>
+
+</body>
+</html>
